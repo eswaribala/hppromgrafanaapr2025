@@ -189,3 +189,6 @@ node_disk_read_bytes_total {job="node_exporter"} >10000 and node_disk_read_time_
 ============================================================================================
 changes(up[6h])--History of up state
 avg_over_time((1 - up)[6h:]) -- In last 6 hours how long it was down
+==============================
+Grup by Query
+sum(jvm_memory_used_bytes) by (id)
