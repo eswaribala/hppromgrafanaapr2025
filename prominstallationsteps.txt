@@ -177,7 +177,8 @@ http://localhost:9182/metrics
 
 helm upgrade prometheus prometheus-community/prometheus -f values.yaml -n prometheus
 
-
+#snmp exporter
+helm install prometheus-snmp -n prometheus prometheus-community/prometheus-snmp-exporter
 
 
 #alert manager to run
