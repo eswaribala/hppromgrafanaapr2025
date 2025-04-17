@@ -1342,7 +1342,7 @@ alertmanager:
      
       - name: 'slack-notifications'
         slack_configs:
-            - api_url: 'https://hooks.slack.com/services/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'
+            - api_url: ''
               channel: '#training'
               send_resolved: true
               title: "{{ .CommonLabels.alertname }} - {{ .Status }}"
@@ -1355,10 +1355,10 @@ alertmanager:
                {{ end }}
       - name: 'pager-duty-notifications'
         pagerduty_configs:
-        - service_key: '03b8f84d8f94460ad02a8b18b6c657c9'
+        - service_key: ''
       - name: 'opsgenie-receiver'
         opsgenie_configs:
-          - api_key: '14ed2176-f589-496c-944c-0717db5402bc'
+          - api_key: ''
             api_url: 'https://api.opsgenie.com'
             message: '{{ .CommonAnnotations.summary }}'
             description: '{{ .CommonAnnotations.description }}'
