@@ -1,0 +1,11 @@
+apiVersion: 1
+contactPoints:
+    - orgId: 1
+      name: slack contact point
+      receivers:
+        - uid: dej5k0lo66whsb
+          type: slack
+          settings:
+            recipient: '#grafanachannel'
+            url: https://hooks.slack.com/services/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
+          disableResolveMessage: false
