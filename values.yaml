@@ -796,8 +796,24 @@ serverFiles:
            annotations:
              summary: "High disk usage on {{ $labels.instance }}"
              description: "Disk usage is above 0% on instance {{ $labels.instance }} for more than 1 minutes."
-            
+         - alert: HighLoadAverage
+           expr: count(node_cpu_seconds_total{mode="system"}) > 10
+           for: 1m
+           labels:
+             severity: warning
+           annotations:
+             summary: "High load average on {{ $labels.instance }}"
+             description: "Load average is higher than 1.5 times the number of CPU cores on instance {{ $labels.instance }}."  
+         - alert: JobRequestRateSum
+           expr: sum(rate(http_server_requests_seconds_sum{outcome="CLIENT_ERROR"}[24h])) > 5.0e-07
+           for: 1m
+           labels:
+             severity: error
+           annotations:
+             summary: "Job Request {{ $labels.instance }} is not running"
+             description: "Job Request {{ $labels.instance }} has error for the last 1 minutes."             
   ## DEPRECATED DEFAULT VALUE, unless explicitly naming your files, please use alerting_rules.yml
+
   alerts: {}
 
   ## Records configuration
@@ -1330,6 +1346,12 @@ alertmanager:
           group_wait: 10s
           group_interval: 1m
           repeat_interval: 30m
+        - match:
+            severity: error
+          receiver: 'web-hook'
+          group_wait: 10s
+          group_interval: 1m
+          repeat_interval: 30m
 
    receivers:
       - name: 'email-alerts'
@@ -1342,7 +1364,7 @@ alertmanager:
      
       - name: 'slack-notifications'
         slack_configs:
-            - api_url: ''
+            - api_url: 'https://hooks.slack.com/services/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'
               channel: '#training'
               send_resolved: true
               title: "{{ .CommonLabels.alertname }} - {{ .Status }}"
@@ -1355,10 +1377,10 @@ alertmanager:
                {{ end }}
       - name: 'pager-duty-notifications'
         pagerduty_configs:
-        - service_key: ''
+        - service_key: '03b8f84d8f94460ad02a8b18b6c657c9'
       - name: 'opsgenie-receiver'
         opsgenie_configs:
-          - api_key: ''
+          - api_key: '093f9cae-e0cc-494d-b1d4-821544eb9756'
             api_url: 'https://api.opsgenie.com'
             message: '{{ .CommonAnnotations.summary }}'
             description: '{{ .CommonAnnotations.description }}'
@@ -1366,7 +1388,11 @@ alertmanager:
               alertname: '{{ .CommonLabels.alertname }}'
               instance: '{{ .CommonLabels.instance }}'
               severity: '{{ .CommonLabels.severity }}'
-            send_resolved: true    
+            send_resolved: true
+      - name: 'web-hook'
+        webhook_configs:
+            - url: 'http://host.docker.internal:4000/webhook'
+     
   persistence:
     size: 2Gi
 
